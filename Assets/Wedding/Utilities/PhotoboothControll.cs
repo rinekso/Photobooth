@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class PhotoboothControll : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class PhotoboothControll : MonoBehaviour
     public CameraScript cameraScript;
     public Transform containerImage;
     public int selectedImage;
+    public Texture selectedTexture;
+    public VideoPlayer selectedVideoPlayer;
     public string gallery;
 
     
@@ -41,10 +44,12 @@ public class PhotoboothControll : MonoBehaviour
         public int phoneNumber;
     }
     
-    void SelectModel(int id, Transform img){
-        selectedImage = id;
+    public void SelectModel(Transform img){
+        selectedImage = img.GetComponent<ImageProperties>().type;
         DisableSelectModel();
         img.GetChild(1).GetComponent<Image>().enabled = true;
+        selectedTexture = img.GetChild(0).GetComponent<RawImage>().texture;
+        selectedVideoPlayer = img.GetComponent<ImageProperties>().videoPlayer;
     }
     
     void DisableSelectModel(){
@@ -62,10 +67,32 @@ public class PhotoboothControll : MonoBehaviour
     }
     
     public void SetPose(){
+        if(selectedImage == 1){
+            pinchItem.SetActive(true);
+            StartCoroutine(LoadItem(pinchItem.GetComponent<RawImage>()));
+            staticItem.SetActive(false);
+        }else if(selectedImage == 0){
+            staticItem.SetActive(true);
+            StartCoroutine(LoadItem(staticItem.GetComponent<RawImage>()));
+            pinchItem.SetActive(false);
+        }
         CameraPanel.SetActive(true);
         ChoosePose.SetActive(false);
-        cameraScript.Init();
+        // cameraScript.Init();
 
+    }
+    IEnumerator LoadItem(RawImage image){
+        image.texture = selectedTexture;
+        selectedVideoPlayer.Stop();
+        yield return new WaitForSeconds(.1f);
+        selectedVideoPlayer.isLooping = true;
+        selectedVideoPlayer.Play();
+        // media.TrySetLoop(true);
+        // media.TrySetMute(true);
+        // media.TryPlay();
+        yield return new WaitForSeconds(3f);
+        selectedVideoPlayer.Stop();
+        // media.TryStop();
     }
     
 }

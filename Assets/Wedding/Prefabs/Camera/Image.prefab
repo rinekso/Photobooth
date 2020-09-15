@@ -66,9 +66,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Selfie Udah
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c69d2720ca4946f48a06060ee4c0e737, type: 2}
-  m_sharedMaterial: {fileID: -3693696978429354177, guid: c69d2720ca4946f48a06060ee4c0e737,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -363,7 +362,6 @@ GameObject:
   - component: {fileID: 8431128034108935415}
   - component: {fileID: 8431128034108935413}
   - component: {fileID: 8431128034108935370}
-  - component: {fileID: 8431128034108935412}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -424,15 +422,3 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &8431128034108935412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8431128034108935414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31476e1b77cda9845a6ce0e6cd969f8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
