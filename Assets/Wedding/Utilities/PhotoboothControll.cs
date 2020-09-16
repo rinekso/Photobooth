@@ -4,9 +4,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using System.IO;
 
 public class PhotoboothControll : MonoBehaviour
 {
+    public string urlVideo1;
+    public string urlVideo2;
+    public GameObject Panel;
     public GameObject ChoosePose;
     public GameObject CameraPanel;
     public GameObject pinchItem;
@@ -19,9 +23,32 @@ public class PhotoboothControll : MonoBehaviour
     public int selectedImage;
     public Texture selectedTexture;
     public VideoPlayer selectedVideoPlayer;
+    public VideoPlayer videoPlayer1;
+    public VideoPlayer videoPlayer2;
     public string gallery;
 
-    
+    private void Start() {
+        StartCoroutine(DownloadFile(urlVideo1, videoPlayer1,"selfie"));
+        StartCoroutine(DownloadFile(urlVideo2, videoPlayer2,"selfie2"));
+    }
+    IEnumerator DownloadFile(string url,VideoPlayer vP,string name) {
+        string path = Path.Combine(Application.persistentDataPath, name+".mp4");
+        if(!File.Exists(path)){
+            var uwr = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
+            uwr.downloadHandler = new DownloadHandlerFile(path);
+            yield return uwr.SendWebRequest();
+            if (uwr.isNetworkError || uwr.isHttpError)
+                Debug.LogError(uwr.error);
+            else{
+                Debug.Log("File successfully downloaded and saved to " + path);
+                vP.url = path;
+                Panel.SetActive(false);
+            }
+        }else{
+            vP.url = path;
+            Panel.SetActive(false);
+        }
+    }
     public void Restart(){
         DisableSelectModel();
         if(cameraScript.webCameraTexture != null)
@@ -91,8 +118,12 @@ public class PhotoboothControll : MonoBehaviour
         // media.TrySetMute(true);
         // media.TryPlay();
         yield return new WaitForSeconds(3f);
-        selectedVideoPlayer.Stop();
+        selectedVideoPlayer.Pause();
         // media.TryStop();
+    }
+    public void ImageReturn(){
+        selectedVideoPlayer.isLooping = false;
+        selectedVideoPlayer.Play();
     }
     
 }

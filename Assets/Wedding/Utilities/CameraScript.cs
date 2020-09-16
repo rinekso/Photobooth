@@ -32,6 +32,7 @@ public class CameraScript : MonoBehaviour
     {
         webCameraTexture = new WebCamTexture();
         devices = WebCamTexture.devices;
+        print("device length: "+WebCamTexture.devices.Length);
         LoadWebCamTexture();
         currentMode = Mode.Casual;
         currentRect = transform.parent.GetComponent<RectTransform>();
@@ -173,6 +174,7 @@ public class CameraScript : MonoBehaviour
         countDown.SetActive(false);
         yield return new WaitForSeconds(.2f);
         coverWhite.SetActive(false);
+        PC.ImageReturn();
         // NativeGallery.SaveImageToGallery(shotCrop, Gallery, date + ".png");
         // SaveImage(shotCrop,"TakeShoot");
     }
