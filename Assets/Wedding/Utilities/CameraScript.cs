@@ -166,7 +166,7 @@ public class CameraScript : MonoBehaviour
         }
 
         // MediaLoader.SaveTexture(Application.persistentDataPath + "/" + Gallery + "/", bytes);
-        NativeGallery.SaveImageToGallery(bytes, Gallery, date + ".jpg");
+        NativeGallery.SaveImageToGallery(bytes, "BeloveWed", PC.wedCode+"_"+date+".jpg");
         PlayerPrefs.SetString("path",Application.persistentDataPath+"/"+Gallery);
 
         coverWhite.SetActive(true);        

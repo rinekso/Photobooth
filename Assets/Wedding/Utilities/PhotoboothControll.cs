@@ -8,14 +8,12 @@ using System.IO;
 
 public class PhotoboothControll : MonoBehaviour
 {
-    public string urlVideo1;
-    public string urlVideo2;
     public GameObject Panel;
     public GameObject ChoosePose;
     public GameObject CameraPanel;
     public GameObject pinchItem;
     public GameObject staticItem;
-    public GameObject imageSelected;
+    public GameObject imagePrefabs;
     public Button galleryButton;
     public Button poseButton;
     public CameraScript cameraScript;
@@ -23,16 +21,44 @@ public class PhotoboothControll : MonoBehaviour
     public int selectedImage;
     public Texture selectedTexture;
     public VideoPlayer selectedVideoPlayer;
-    public VideoPlayer videoPlayer1;
-    public VideoPlayer videoPlayer2;
+    public GameObject videoPlayer;
     public string gallery;
+    public string wedCode;
 
     private void Start() {
-        StartCoroutine(DownloadFile(urlVideo1, videoPlayer1,"selfie"));
-        StartCoroutine(DownloadFile(urlVideo2, videoPlayer2,"selfie2"));
+        FlutterUnityPlugin.Message message = FlutterUnityPlugin.Messages.Receive("code");
+
+        string code = message.data;
+        wedCode = code;
+        CheckFiles();
+    }
+    void CheckFiles(){
+        string path = Path.Combine(Application.persistentDataPath, "wedding_assets/"+wedCode+"/photobooth");
+        print(path);
+        var files = System.IO.Directory.GetFiles(path);
+        if(files.Length > 0){
+            foreach (string file in files)
+            {
+                VideoPlayer vp = Instantiate(videoPlayer,transform).GetComponent<VideoPlayer>();
+                print(file);
+                vp.url = file;
+                RenderTexture rt = new RenderTexture(512,768,24);
+                vp.targetTexture = rt;
+                GameObject imageProperties = Instantiate(imagePrefabs,containerImage);
+                imageProperties.GetComponent<Button>().onClick.AddListener(()=>{
+                    SelectModel(imageProperties.transform);
+                });
+                imageProperties.GetComponentInChildren<RawImage>().texture = rt;
+                imageProperties.GetComponent<ImageProperties>().videoPlayer = vp;
+            }
+        }else{
+            print("no data photobooth AR");
+        // StartCoroutine(DownloadFile(urlVideo1, videoPlayer1,"selfie"));
+        // StartCoroutine(DownloadFile(urlVideo2, videoPlayer2,"selfie2"));
+        }
     }
     IEnumerator DownloadFile(string url,VideoPlayer vP,string name) {
-        string path = Path.Combine(Application.persistentDataPath, name+".mp4");
+        string path = Path.Combine(Application.persistentDataPath, "wedding_assets/"+wedCode+"/");
         if(!File.Exists(path)){
             var uwr = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
             uwr.downloadHandler = new DownloadHandlerFile(path);
