@@ -24,12 +24,15 @@ public class PhotoboothControll : MonoBehaviour
     public GameObject videoPlayer;
     public string gallery;
     public string wedCode;
+    public TMPro.TextMeshProUGUI title;
 
     private void Start() {
-        FlutterUnityPlugin.Message message = FlutterUnityPlugin.Messages.Receive("code");
-
-        string code = message.data;
-        wedCode = code;
+        // CheckFiles();
+    }
+    public void SetWeddingCode(string data){
+        print(data);
+        wedCode = data;
+        title.text = data;
         CheckFiles();
     }
     void CheckFiles(){
@@ -89,6 +92,9 @@ public class PhotoboothControll : MonoBehaviour
     }
     
     // Start is called before the first frame update
+    private void Update() {
+        
+    }
     public struct UserData{
         public int wedding;
         public string name;
