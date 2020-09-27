@@ -131,6 +131,7 @@ public class CameraScript : MonoBehaviour
     
     IEnumerator Take(){
         yield return new WaitForEndOfFrame();
+        PC.selectedVideoPlayer.Play();
         coverWhite.SetActive(false);
         countDown.SetActive(true);
         countDownDesc.SetActive(true);
@@ -159,15 +160,13 @@ public class CameraScript : MonoBehaviour
         preview.texture = shotCrop;
         string date = System.DateTime.Now.ToString("ss-mm-hh_d-MM-y");
         byte[] bytes = shotCrop.EncodeToJPG();
-        string Gallery = PC.gallery;
-        string fullPath = Application.persistentDataPath+"/"+Gallery;
+        string fullPath = Application.persistentDataPath+"/wedding_photos/"+PC.wedCode;
         if(!Directory.Exists( @fullPath ) ){
             Directory.CreateDirectory(@fullPath);
         }
 
-        // MediaLoader.SaveTexture(Application.persistentDataPath + "/" + Gallery + "/", bytes);
-        NativeGallery.SaveImageToGallery(bytes, "BeloveWed", PC.wedCode+"_"+date+".jpg");
-        PlayerPrefs.SetString("path",Application.persistentDataPath+"/"+Gallery);
+        SaveImage(Application.persistentDataPath + "/wedding_photos/" + PC.wedCode + "/", bytes);
+        // NativeGallery.SaveImageToGallery(bytes, "BeloveWed", PC.wedCode+"_"+date+".jpg");
 
         coverWhite.SetActive(true);        
         textCount.text = "";
@@ -175,14 +174,14 @@ public class CameraScript : MonoBehaviour
         yield return new WaitForSeconds(.2f);
         coverWhite.SetActive(false);
         PC.ImageReturn();
-        // NativeGallery.SaveImageToGallery(shotCrop, Gallery, date + ".png");
-        // SaveImage(shotCrop,"TakeShoot");
     }
     
-    void SaveImage(Texture2D image, string path){
-        print(image.height+"/"+image.width);
-        string date = System.DateTime.Now.ToString("ss-mm-hh_d-MM-y");
-        // NativeGallery.SaveImageToGallery( image, "GalleryTest", date+".png" );
+    void SaveImage(string path, byte[] data){
+        var date = DateTime.Now.ToString("ss-mm-hh_d-MM-y");
+        path = path + date + ".jpg";
+        
+        Debug.Log("Saving texture to: " + path);
+        File.WriteAllBytes(@path, data);
     }
     
     public void GalleryScene(){
