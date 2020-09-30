@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using System.IO;
+using System;
+using UnityEngine.EventSystems;
 
 public class PhotoboothControll : MonoBehaviour
 {
@@ -25,14 +27,54 @@ public class PhotoboothControll : MonoBehaviour
     public string gallery;
     public string wedCode;
     public TMPro.TextMeshProUGUI title;
+    bool isFirst = false;
+    Vector2 startPos;
+    Vector2 selisih;
 
     private void Start() {
         // CheckFiles();
     }
+    public void PointerDown(string data){
+        print("selected image : "+selectedImage);
+        if(selectedImage == 1){
+            string[] sparator = {","};
+            string[] pos = data.Split(sparator,2,StringSplitOptions.RemoveEmptyEntries);
+            if(!isFirst){
+                isFirst = true;
+                print(pinchItem.GetComponent<RectTransform>().position);
+                startPos.x = -float.Parse(pos[1]);
+                startPos.y = float.Parse(pos[0]);
+
+                selisih.x = pinchItem.GetComponent<RectTransform>().position.x-startPos.x;
+                selisih.y = pinchItem.GetComponent<RectTransform>().position.y-startPos.y;
+            }else{
+                pinchItem.GetComponent<RectTransform>().position = new Vector2(-float.Parse(pos[1]),float.Parse(pos[0])) + selisih;
+            }
+        }
+    }
+    // public void OnPointerDown(PointerEventData ped){
+    //     startPos = ped.position;
+    //     selisih.x = pinchItem.GetComponent<RectTransform>().position.x-startPos.x;
+    //     selisih.y = pinchItem.GetComponent<RectTransform>().position.y-startPos.y;
+
+    //     print("touch down");
+    // }
+    // public void OnDrag(PointerEventData ped){
+    //     pinchItem.GetComponent<RectTransform>().position = ped.position + selisih;
+    // }
+    public void PointerEnd(string data){
+        if(selectedImage == 1){
+            isFirst = false;
+        }
+    }
+    public void Scaling(string data) {
+        float scale = float.Parse(data);
+        pinchItem.GetComponent<RectTransform>().localScale = new Vector3(scale,scale,scale);
+    }
     public void SetWeddingCode(string data){
         print(data);
         wedCode = data;
-        title.text = data;
+        // title.text = data;
         CheckFiles();
     }
     void CheckFiles(){
@@ -79,12 +121,11 @@ public class PhotoboothControll : MonoBehaviour
         }
     }
     public void Restart(){
-        DisableSelectModel();
+        // DisableSelectModel();
         if(cameraScript.webCameraTexture != null)
             cameraScript.webCameraTexture.Stop();
         CameraPanel.SetActive(false);
         ChoosePose.SetActive(true);
-        SetMedia(false);
     }
 
     public void SetMedia(bool value)
@@ -104,7 +145,8 @@ public class PhotoboothControll : MonoBehaviour
     }
     
     public void SelectModel(Transform img){
-        selectedImage = img.GetComponent<ImageProperties>().type;
+        // selectedImage = img.GetComponent<ImageProperties>().type;
+        selectedImage = 1;
         DisableSelectModel();
         img.GetChild(1).GetComponent<Image>().enabled = true;
         selectedTexture = img.GetChild(0).GetComponent<RawImage>().texture;
@@ -135,6 +177,8 @@ public class PhotoboothControll : MonoBehaviour
             StartCoroutine(LoadItem(staticItem.GetComponent<RawImage>()));
             pinchItem.SetActive(false);
         }
+        selectedVideoPlayer.Stop();
+        selectedVideoPlayer.Play();
         CameraPanel.SetActive(true);
         ChoosePose.SetActive(false);
         // cameraScript.Init();

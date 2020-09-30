@@ -12,6 +12,7 @@ public class CameraScript : MonoBehaviour
     RectTransform currentRect;
     public RectTransform buttonPanel;
     public RawImage preview;
+    public GameObject backButton;
     public enum Mode{
         Boomerang,Selfie,Casual
     }
@@ -131,6 +132,8 @@ public class CameraScript : MonoBehaviour
     
     IEnumerator Take(){
         yield return new WaitForEndOfFrame();
+        backButton.SetActive(false);
+        PC.selectedVideoPlayer.Stop();
         PC.selectedVideoPlayer.Play();
         coverWhite.SetActive(false);
         countDown.SetActive(true);
@@ -174,6 +177,7 @@ public class CameraScript : MonoBehaviour
         yield return new WaitForSeconds(.2f);
         coverWhite.SetActive(false);
         PC.ImageReturn();
+        backButton.SetActive(true);
     }
     
     void SaveImage(string path, byte[] data){
