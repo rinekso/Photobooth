@@ -33,7 +33,7 @@ public class CameraScript : MonoBehaviour
     {
         webCameraTexture = new WebCamTexture();
         devices = WebCamTexture.devices;
-        print("device length: "+WebCamTexture.devices.Length);
+        // print("device length: "+WebCamTexture.devices.Length);
         LoadWebCamTexture();
         currentMode = Mode.Casual;
         currentRect = transform.parent.GetComponent<RectTransform>();
@@ -52,9 +52,9 @@ public class CameraScript : MonoBehaviour
         }
         LoadWebCamTexture();
     }
-    void LoadWebCamTexture(){
+    public void LoadWebCamTexture(){
         webCameraTexture.deviceName = devices[currentDevice].name;
-        print(devices[currentDevice].name);
+        // Fprint(devices[currentDevice].name);
         webCameraTexture.Play();
 
         // change as user rotates iPhone or Android:
@@ -102,10 +102,9 @@ public class CameraScript : MonoBehaviour
         
     }
     public void TakePhoto(){
-        if(currentMode == Mode.Casual || currentMode == Mode.Selfie)
-            StartCoroutine(Take());
-        else if(currentMode == Mode.Boomerang)
-            StartCoroutine(Boomerang());
+        PC.selectedVideoPlayer.Stop();
+        PC.selectedVideoPlayer.Play();
+        StartCoroutine(Take());
     }
     Texture2D[] tempTexture = new Texture2D[20];
     IEnumerator Boomerang(){
@@ -117,8 +116,6 @@ public class CameraScript : MonoBehaviour
             Color[] pixels = new Color[Screen.width * Screen.height-(int) buttonPanel.rect.height];
             int crop = (Screen.height-Screen.height-(int) buttonPanel.rect.height);
             pixels = shot.GetPixels(0, crop, shot.width, shot.height-crop, 0);
-            print("width : "+shot.width);
-            print("height : "+shot.height);
             shotCrop.SetPixels(0, 0,Screen.width,Screen.height-(int) buttonPanel.rect.height, pixels,0);
             shotCrop.Apply();
             tempTexture[i] = shotCrop;
@@ -133,8 +130,6 @@ public class CameraScript : MonoBehaviour
     IEnumerator Take(){
         yield return new WaitForEndOfFrame();
         backButton.SetActive(false);
-        PC.selectedVideoPlayer.Stop();
-        PC.selectedVideoPlayer.Play();
         coverWhite.SetActive(false);
         countDown.SetActive(true);
         countDownDesc.SetActive(true);
@@ -153,7 +148,7 @@ public class CameraScript : MonoBehaviour
         countDownDesc.SetActive(false);
         yield return new WaitForEndOfFrame();
         int crop = (int) buttonPanel.rect.height;
-        print("crop : "+crop+" / screen height : "+Screen.height+" / rect height : "+(Screen.height-(int) buttonPanel.rect.height));
+        // print("crop : "+crop+" / screen height : "+Screen.height+" / rect height : "+(Screen.height-(int) buttonPanel.rect.height));
         Texture2D shot = ScreenCapture.CaptureScreenshotAsTexture();
         Texture2D shotCrop = new Texture2D(Screen.width, Screen.height-(int) buttonPanel.rect.height);
         Color[] pixels = new Color[Screen.width * Screen.height-(int) buttonPanel.rect.height];

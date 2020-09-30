@@ -38,20 +38,20 @@ public class PhotoboothControll : MonoBehaviour
         UnityMessageManager.Instance.SendMessageToFlutter("exit");
     }
     public void PointerDown(string data){
-        print("selected image : "+selectedImage);
+        // print("selected image : "+selectedImage);
         if(selectedImage == 1){
             string[] sparator = {","};
             string[] pos = data.Split(sparator,2,StringSplitOptions.RemoveEmptyEntries);
             if(!isFirst){
                 isFirst = true;
-                print(pinchItem.GetComponent<RectTransform>().position);
-                startPos.x = -float.Parse(pos[1]);
-                startPos.y = float.Parse(pos[0]);
+                // print(pinchItem.GetComponent<RectTransform>().position);
+                startPos.x = float.Parse(pos[0]);
+                startPos.y = -float.Parse(pos[1]);
 
                 selisih.x = pinchItem.GetComponent<RectTransform>().position.x-startPos.x;
                 selisih.y = pinchItem.GetComponent<RectTransform>().position.y-startPos.y;
             }else{
-                pinchItem.GetComponent<RectTransform>().position = new Vector2(-float.Parse(pos[1]),float.Parse(pos[0])) + selisih;
+                pinchItem.GetComponent<RectTransform>().position = new Vector2(float.Parse(pos[0]),-float.Parse(pos[1])) + selisih;
             }
         }
     }
@@ -75,20 +75,20 @@ public class PhotoboothControll : MonoBehaviour
         pinchItem.GetComponent<RectTransform>().localScale = new Vector3(scale,scale,scale);
     }
     public void SetWeddingCode(string data){
-        print(data);
+        // print(data);
         wedCode = data;
         // title.text = data;
         CheckFiles();
     }
     void CheckFiles(){
         string path = Path.Combine(Application.persistentDataPath, "wedding_assets/"+wedCode+"/photobooth");
-        print(path);
+        // print(path);
         var files = System.IO.Directory.GetFiles(path);
         if(files.Length > 0){
             foreach (string file in files)
             {
                 VideoPlayer vp = Instantiate(videoPlayer,transform).GetComponent<VideoPlayer>();
-                print(file);
+                // print(file);
                 vp.url = file;
                 RenderTexture rt = new RenderTexture(512,768,24);
                 vp.targetTexture = rt;
@@ -100,7 +100,7 @@ public class PhotoboothControll : MonoBehaviour
                 imageProperties.GetComponent<ImageProperties>().videoPlayer = vp;
             }
         }else{
-            print("no data photobooth AR");
+            // print("no data photobooth AR");
         // StartCoroutine(DownloadFile(urlVideo1, videoPlayer1,"selfie"));
         // StartCoroutine(DownloadFile(urlVideo2, videoPlayer2,"selfie2"));
         }
@@ -124,6 +124,13 @@ public class PhotoboothControll : MonoBehaviour
         }
     }
     public void Restart(){
+        VideoPlayer[] vps = GetComponentsInChildren<VideoPlayer>();
+        for (int i = 0; i < vps.Length; i++)
+        {
+            vps[i].Stop();
+            vps[i].Play();
+            vps[i].isLooping = true;
+        }
         // DisableSelectModel();
         if(cameraScript.webCameraTexture != null)
             cameraScript.webCameraTexture.Stop();
@@ -184,7 +191,7 @@ public class PhotoboothControll : MonoBehaviour
         selectedVideoPlayer.Play();
         CameraPanel.SetActive(true);
         ChoosePose.SetActive(false);
-        // cameraScript.Init();
+        cameraScript.LoadWebCamTexture();
 
     }
     IEnumerator LoadItem(RawImage image){
