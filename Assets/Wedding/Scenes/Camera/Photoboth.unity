@@ -947,7 +947,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &519068219
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1481,7 +1481,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1534,6 +1534,7 @@ MonoBehaviour:
   webCameraTexture: {fileID: 0}
   buttonPanel: {fileID: 1987266878}
   preview: {fileID: 391546312}
+  backButton: {fileID: 0}
   countDown: {fileID: 1992991123}
   countDownDesc: {fileID: 8269797791849336588}
   coverWhite: {fileID: 312743981}
@@ -2385,7 +2386,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 17.000036}
+  m_AnchoredPosition: {x: 0, y: 16.999985}
   m_SizeDelta: {x: 0, y: 900}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1203053338
@@ -3558,7 +3559,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 354323221}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9811111
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
