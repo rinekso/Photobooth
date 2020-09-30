@@ -34,6 +34,9 @@ public class PhotoboothControll : MonoBehaviour
     private void Start() {
         // CheckFiles();
     }
+    public void Exit(){
+        UnityMessageManager.Instance.SendMessageToFlutter("exit");
+    }
     public void PointerDown(string data){
         print("selected image : "+selectedImage);
         if(selectedImage == 1){
