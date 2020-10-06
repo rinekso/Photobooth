@@ -740,7 +740,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 391546312}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1341622780}
+        m_MethodName: toGallery
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &391546312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1636,7 +1647,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1341622780}
-        m_MethodName: Exit
+        m_MethodName: exit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2355,7 +2366,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2515,8 +2526,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 19.499275}
-  m_SizeDelta: {x: 0, y: 900}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1203053338
 MonoBehaviour:
@@ -2531,7 +2542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
-  m_VerticalFit: 0
+  m_VerticalFit: 2
 --- !u!114 &1203053339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2541,7 +2552,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1203053336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -2549,14 +2560,13 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 6
-  m_Spacing: 50
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 400, y: 650}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &1341622778
 GameObject:
   m_ObjectHideFlags: 0
@@ -2608,15 +2618,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a7a9856aa40e74cbbefc53d2ca05d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Panel: {fileID: 96772645}
-  ChoosePose: {fileID: 549367484}
-  CameraPanel: {fileID: 519068218}
+  choosePose: {fileID: 549367484}
+  cameraPanel: {fileID: 519068218}
   pinchItem: {fileID: 1108557761}
   staticItem: {fileID: 1004116579}
   imagePrefabs: {fileID: 6711155023771231435, guid: e1fb8625b8824204ea28c8d8a9320759,
     type: 3}
-  galleryButton: {fileID: 391546311}
-  poseButton: {fileID: 651719663}
   cameraScript: {fileID: 755721873}
   containerImage: {fileID: 1203053337}
   selectedImage: 0
@@ -2624,9 +2631,7 @@ MonoBehaviour:
   selectedVideoPlayer: {fileID: 0}
   videoPlayer: {fileID: 2372815478351736213, guid: 3e8e9ab895fff554293095127cc7c36e,
     type: 3}
-  gallery: 
   wedCode: 
-  title: {fileID: 450823781}
 --- !u!1 &1458217037
 GameObject:
   m_ObjectHideFlags: 0
@@ -3531,8 +3536,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 354323222}
   m_HandleRect: {fileID: 354323221}
   m_Direction: 2
-  m_Value: -0.14701574
-  m_Size: 0
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

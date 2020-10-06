@@ -1,59 +1,94 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using System.IO;
 using System;
-using UnityEngine.EventSystems;
+using UnityEngine.Scripting;
 
 public class PhotoboothControll : MonoBehaviour
 {
-    public GameObject Panel;
-    public GameObject ChoosePose;
-    public GameObject CameraPanel;
+    public GameObject choosePose;
+    public GameObject cameraPanel;
     public GameObject pinchItem;
     public GameObject staticItem;
     public GameObject imagePrefabs;
-    public Button galleryButton;
-    public Button poseButton;
     public CameraScript cameraScript;
     public Transform containerImage;
     public int selectedImage;
     public Texture selectedTexture;
     public VideoPlayer selectedVideoPlayer;
     public GameObject videoPlayer;
-    public string gallery;
     public string wedCode;
-    public TMPro.TextMeshProUGUI title;
     bool isFirst = false;
     Vector2 startPos;
     Vector2 selisih;
 
     private void Start() {
+        // print("start");
         // CheckFiles();
     }
-    public void Exit(){
-        UnityMessageManager.Instance.SendMessageToFlutter("exit");
+    static void enableGC()
+    {
+        GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
+        // Trigger a collection to free memory.
+        GC.Collect();
+    }
+    public void exit(){
+        try
+        {
+            StopAllCoroutines();
+            enableGC();
+            UnityMessageManager.Instance.SendMessageToFlutter("exit");            
+        }
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("exit error");
+            throw;
+        }
+    }
+    public void toGallery(){
+        try
+        {
+            StopAllCoroutines();
+            enableGC();
+            UnityMessageManager.Instance.SendMessageToFlutter("toGallery");            
+        }
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("exit error");
+            throw;
+        }
     }
     public void PointerDown(string data){
-        // print("selected image : "+selectedImage);
-        if(selectedImage == 1){
-            string[] sparator = {","};
-            string[] pos = data.Split(sparator,2,StringSplitOptions.RemoveEmptyEntries);
-            if(!isFirst){
-                isFirst = true;
-                // print(pinchItem.GetComponent<RectTransform>().position);
-                startPos.x = float.Parse(pos[0]);
-                startPos.y = -float.Parse(pos[1]);
+        try
+        {
+            if(selectedImage == 1){
+                string[] sparator = {","};
+                string[] pos = data.Split(sparator,2,StringSplitOptions.RemoveEmptyEntries);
+                if(!isFirst){
+                    isFirst = true;
+                    // print(pinchItem.GetComponent<RectTransform>().position);
+                    startPos.x = float.Parse(pos[0]);
+                    startPos.y = -float.Parse(pos[1]);
 
-                selisih.x = pinchItem.GetComponent<RectTransform>().position.x-startPos.x;
-                selisih.y = pinchItem.GetComponent<RectTransform>().position.y-startPos.y;
-            }else{
-                pinchItem.GetComponent<RectTransform>().position = new Vector2(float.Parse(pos[0]),-float.Parse(pos[1])) + selisih;
+                    selisih.x = pinchItem.GetComponent<RectTransform>().position.x-startPos.x;
+                    selisih.y = pinchItem.GetComponent<RectTransform>().position.y-startPos.y;
+                }else{
+                    pinchItem.GetComponent<RectTransform>().position = new Vector2(float.Parse(pos[0]),-float.Parse(pos[1])) + selisih;
+                }
             }
         }
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("pointer down error");            
+            throw;
+        }
+        // print("selected image : "+selectedImage);
     }
     // public void OnPointerDown(PointerEventData ped){
     //     startPos = ped.position;
@@ -71,38 +106,74 @@ public class PhotoboothControll : MonoBehaviour
         }
     }
     public void Scaling(string data) {
-        float scale = float.Parse(data);
-        pinchItem.GetComponent<RectTransform>().localScale = new Vector3(scale,scale,scale);
+        try
+        {
+            float scale = float.Parse(data);
+            pinchItem.GetComponent<RectTransform>().localScale = new Vector3(scale,scale,scale);
+        }
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("scalling error");
+            throw;
+        }
     }
     public void SetWeddingCode(string data){
-        // print(data);
-        wedCode = data;
-        // title.text = data;
-        CheckFiles();
+        if(data != wedCode){
+            wedCode = data;
+            CheckFiles();
+        }
     }
     void CheckFiles(){
         string path = Path.Combine(Application.persistentDataPath, "wedding_assets/"+wedCode+"/photobooth");
         // print(path);
         var files = System.IO.Directory.GetFiles(path);
+
+        DeleteVideoPlayer();
+        DeleteImageProperties();
+
         if(files.Length > 0){
             foreach (string file in files)
             {
-                VideoPlayer vp = Instantiate(videoPlayer,transform).GetComponent<VideoPlayer>();
-                // print(file);
-                vp.url = file;
-                RenderTexture rt = new RenderTexture(512,768,24);
-                vp.targetTexture = rt;
-                GameObject imageProperties = Instantiate(imagePrefabs,containerImage);
-                imageProperties.GetComponent<Button>().onClick.AddListener(()=>{
-                    SelectModel(imageProperties.transform);
-                });
-                imageProperties.GetComponentInChildren<RawImage>().texture = rt;
-                imageProperties.GetComponent<ImageProperties>().videoPlayer = vp;
+                try
+                {
+                    VideoPlayer vp = Instantiate(videoPlayer,transform).GetComponent<VideoPlayer>();
+                    // print(file);
+                    vp.url = file;
+                    RenderTexture rt = new RenderTexture(512,768,24);
+                    vp.targetTexture = rt;
+                    GameObject imageProperties = Instantiate(imagePrefabs,containerImage);
+                    imageProperties.GetComponent<Button>().onClick.AddListener(()=>{
+                        SelectModel(imageProperties.transform);
+                    });
+                    imageProperties.GetComponentInChildren<RawImage>().texture = rt;
+                    imageProperties.GetComponent<ImageProperties>().videoPlayer = vp;
+                }
+                catch (System.Exception e)
+                {
+                    print(e.Message);
+                    print("check file error");
+                    throw;
+                }
             }
-        }else{
-            // print("no data photobooth AR");
-        // StartCoroutine(DownloadFile(urlVideo1, videoPlayer1,"selfie"));
-        // StartCoroutine(DownloadFile(urlVideo2, videoPlayer2,"selfie2"));
+        }
+    }
+    void DeleteImageProperties(){
+        ImageProperties[] imgprop = containerImage.GetComponentsInChildren<ImageProperties>();
+        if(imgprop.Length > 0){
+            for (int i = 0; i < imgprop.Length; i++)
+            {
+                Destroy(imgprop[i].gameObject);
+            }
+        }
+    }
+    void DeleteVideoPlayer(){
+        VideoPlayer[] imgprop = transform.GetComponentsInChildren<VideoPlayer>();
+        if(imgprop.Length > 0){
+            for (int i = 0; i < imgprop.Length; i++)
+            {
+                Destroy(imgprop[i].gameObject);
+            }
         }
     }
     IEnumerator DownloadFile(string url,VideoPlayer vP,string name) {
@@ -116,11 +187,11 @@ public class PhotoboothControll : MonoBehaviour
             else{
                 Debug.Log("File successfully downloaded and saved to " + path);
                 vP.url = path;
-                Panel.SetActive(false);
+                // panel.SetActive(false);
             }
         }else{
             vP.url = path;
-            Panel.SetActive(false);
+            // panel.SetActive(false);
         }
     }
     public void Restart(){
@@ -134,8 +205,8 @@ public class PhotoboothControll : MonoBehaviour
         // DisableSelectModel();
         if(cameraScript.webCameraTexture != null)
             cameraScript.webCameraTexture.Stop();
-        CameraPanel.SetActive(false);
-        ChoosePose.SetActive(true);
+        cameraPanel.SetActive(false);
+        choosePose.SetActive(true);
     }
 
     public void SetMedia(bool value)
@@ -189,8 +260,8 @@ public class PhotoboothControll : MonoBehaviour
         }
         selectedVideoPlayer.Stop();
         selectedVideoPlayer.Play();
-        CameraPanel.SetActive(true);
-        ChoosePose.SetActive(false);
+        cameraPanel.SetActive(true);
+        choosePose.SetActive(false);
         cameraScript.LoadWebCamTexture();
 
     }

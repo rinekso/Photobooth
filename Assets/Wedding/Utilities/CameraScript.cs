@@ -53,43 +53,51 @@ public class CameraScript : MonoBehaviour
         LoadWebCamTexture();
     }
     public void LoadWebCamTexture(){
-        webCameraTexture.deviceName = devices[currentDevice].name;
-        // Fprint(devices[currentDevice].name);
-        webCameraTexture.Play();
+        try
+        {
+            webCameraTexture.deviceName = devices[currentDevice].name;
+            // Fprint(devices[currentDevice].name);
+            webCameraTexture.Play();
+            // change as user rotates iPhone or Android:
 
-        // change as user rotates iPhone or Android:
+            int cwNeeded = webCameraTexture.videoRotationAngle;
+            // Unity helpfully returns the _clockwise_ twist needed
+            // guess nobody at Unity noticed their product works in counterclockwise:
+            int ccwNeeded = -cwNeeded;
 
-        int cwNeeded = webCameraTexture.videoRotationAngle;
-        // Unity helpfully returns the _clockwise_ twist needed
-        // guess nobody at Unity noticed their product works in counterclockwise:
-        int ccwNeeded = -cwNeeded;
+            // IF the image needs to be mirrored, it seems that it
+            // ALSO needs to be spun. Strange: but true.
+            if ( webCameraTexture.videoVerticallyMirrored ) ccwNeeded += 180;
 
-        // IF the image needs to be mirrored, it seems that it
-        // ALSO needs to be spun. Strange: but true.
-        if ( webCameraTexture.videoVerticallyMirrored ) ccwNeeded += 180;
+            // you'll be using a UI RawImage, so simply spin the RectTransform
+            GetComponent<RectTransform>().localEulerAngles = new Vector3(0f,0f,ccwNeeded);
 
-        // you'll be using a UI RawImage, so simply spin the RectTransform
-        GetComponent<RectTransform>().localEulerAngles = new Vector3(0f,0f,ccwNeeded);
+            float videoRatio = (float)webCameraTexture.width/(float)webCameraTexture.height;
 
-        float videoRatio = (float)webCameraTexture.width/(float)webCameraTexture.height;
+            // you'll be using an AspectRatioFitter on the Image, so simply set it
+            GetComponent<AspectRatioFitter>().aspectRatio = videoRatio;
 
-        // you'll be using an AspectRatioFitter on the Image, so simply set it
-        GetComponent<AspectRatioFitter>().aspectRatio = videoRatio;
+            // alert, the ONLY way to mirror a RAW image, is, the uvRect.
+            // changing the scale is completely broken.
+            if ( webCameraTexture.videoVerticallyMirrored )
+                GetComponent<RawImage>().uvRect = new Rect(1,0,-1,1);  // means flip on vertical axis
+            else
+                GetComponent<RawImage>().uvRect = new Rect(0,0,1,1);  // means no flip
 
-        // alert, the ONLY way to mirror a RAW image, is, the uvRect.
-        // changing the scale is completely broken.
-        if ( webCameraTexture.videoVerticallyMirrored )
-            GetComponent<RawImage>().uvRect = new Rect(1,0,-1,1);  // means flip on vertical axis
-        else
-            GetComponent<RawImage>().uvRect = new Rect(0,0,1,1);  // means no flip
-
-        if(currentDevice > 0){
-            GetComponent<RawImage>().uvRect = new Rect(1,0,-1,1);  // means no flip
-        GetComponent<RectTransform>().localEulerAngles = new Vector3(0f,0f,-90);
+            if(currentDevice > 0){
+                GetComponent<RawImage>().uvRect = new Rect(1,0,-1,1);  // means no flip
+                GetComponent<RectTransform>().localEulerAngles = new Vector3(0f,0f,-90);
+            }
+                
+            // GetComponent<RectTransform>().sizeDelta = new Vector2(webCameraTexture.width,webCameraTexture.height);
+            GetComponent<RawImage>().texture = webCameraTexture;
         }
-            
-        // GetComponent<RectTransform>().sizeDelta = new Vector2(webCameraTexture.width,webCameraTexture.height);
-        GetComponent<RawImage>().texture = webCameraTexture;
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("load texture camera error");
+            throw;
+        }
     }
     public void ChangeMode(int mode){
         if(mode == 0){
@@ -107,31 +115,19 @@ public class CameraScript : MonoBehaviour
         
     }
     public void TakePhoto(){
-        PC.selectedVideoPlayer.Stop();
-        PC.selectedVideoPlayer.Play();
-        StartCoroutine(Take());
-    }
-    Texture2D[] tempTexture = new Texture2D[20];
-    IEnumerator Boomerang(){
-        for (int i = 0; i < 10; i++)
+        try
         {
-            yield return new WaitForEndOfFrame();
-            Texture2D shot = ScreenCapture.CaptureScreenshotAsTexture();
-            Texture2D shotCrop = new Texture2D(Screen.width, Screen.height-(int) buttonPanel.rect.height);
-            Color[] pixels = new Color[Screen.width * Screen.height-(int) buttonPanel.rect.height];
-            int crop = (Screen.height-Screen.height-(int) buttonPanel.rect.height);
-            pixels = shot.GetPixels(0, crop, shot.width, shot.height-crop, 0);
-            shotCrop.SetPixels(0, 0,Screen.width,Screen.height-(int) buttonPanel.rect.height, pixels,0);
-            shotCrop.Apply();
-            tempTexture[i] = shotCrop;
-            yield return new WaitForSeconds(.2f);
+            PC.selectedVideoPlayer.Stop();
+            PC.selectedVideoPlayer.Play();
+            StartCoroutine(Take());
         }
-        yield return new WaitForEndOfFrame();
-        // NativeCamera.RecordVideo(,);
-
+        catch (System.Exception)
+        {
+            
+            throw;
+        }
     }
-    
-    
+    Texture2D[] tempTexture = new Texture2D[20];    
     IEnumerator Take(){
         yield return new WaitForEndOfFrame();
         backButton.SetActive(false);
@@ -152,32 +148,52 @@ public class CameraScript : MonoBehaviour
         countDown.SetActive(false);
         countDownDesc.SetActive(false);
         yield return new WaitForEndOfFrame();
-        int crop = (int) buttonPanel.rect.height;
-        // print("crop : "+crop+" / screen height : "+Screen.height+" / rect height : "+(Screen.height-(int) buttonPanel.rect.height));
-        Texture2D shot = ScreenCapture.CaptureScreenshotAsTexture();
-        Texture2D shotCrop = new Texture2D(Screen.width, Screen.height-(int) buttonPanel.rect.height);
-        Color[] pixels = new Color[Screen.width * Screen.height-(int) buttonPanel.rect.height];
-        pixels = shot.GetPixels(0, crop, shot.width, shot.height-crop, 0);
-        shotCrop.SetPixels(0, 0, Screen.width, Screen.height-crop, pixels,0);
-        shotCrop.Apply();
-        preview.texture = shotCrop;
-        string date = System.DateTime.Now.ToString("ss-mm-hh_d-MM-y");
-        byte[] bytes = shotCrop.EncodeToJPG();
-        string fullPath = Application.persistentDataPath+"/wedding_photos/"+PC.wedCode;
-        if(!Directory.Exists( @fullPath ) ){
-            Directory.CreateDirectory(@fullPath);
+        try
+        {
+            int crop = (int) buttonPanel.rect.height;
+            // print("crop : "+crop+" / screen height : "+Screen.height+" / rect height : "+(Screen.height-(int) buttonPanel.rect.height));
+            Texture2D shot = ScreenCapture.CaptureScreenshotAsTexture();
+            Texture2D shotCrop = new Texture2D(Screen.width, Screen.height-(int) buttonPanel.rect.height);
+            Color[] pixels = new Color[Screen.width * Screen.height-(int) buttonPanel.rect.height];
+            pixels = shot.GetPixels(0, crop, shot.width, shot.height-crop, 0);
+            shotCrop.SetPixels(0, 0, Screen.width, Screen.height-crop, pixels,0);
+            shotCrop.Apply();
+            preview.texture = shotCrop;
+            string date = System.DateTime.Now.ToString("ss-mm-hh_d-MM-y");
+            byte[] bytes = shotCrop.EncodeToJPG();
+            string fullPath = Application.persistentDataPath+"/wedding_photos/"+PC.wedCode;
+            if(!Directory.Exists( @fullPath ) ){
+                Directory.CreateDirectory(@fullPath);
+            }
+
+            SaveImage(Application.persistentDataPath + "/wedding_photos/" + PC.wedCode + "/", bytes);
+        }
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("take error");
+            throw;
         }
 
-        SaveImage(Application.persistentDataPath + "/wedding_photos/" + PC.wedCode + "/", bytes);
         // NativeGallery.SaveImageToGallery(bytes, "BeloveWed", PC.wedCode+"_"+date+".jpg");
 
         coverWhite.SetActive(true);        
         textCount.text = "";
         countDown.SetActive(false);
         yield return new WaitForSeconds(.2f);
-        coverWhite.SetActive(false);
-        PC.ImageReturn();
-        backButton.SetActive(true);
+
+        try
+        {
+            coverWhite.SetActive(false);
+            PC.ImageReturn();
+            backButton.SetActive(true);
+        }
+        catch (System.Exception e)
+        {
+            print(e.Message);
+            print("take close error");
+            throw;
+        }
     }
     
     void SaveImage(string path, byte[] data){
