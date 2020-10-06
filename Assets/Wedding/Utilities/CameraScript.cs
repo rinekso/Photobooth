@@ -82,6 +82,11 @@ public class CameraScript : MonoBehaviour
             GetComponent<RawImage>().uvRect = new Rect(1,0,-1,1);  // means flip on vertical axis
         else
             GetComponent<RawImage>().uvRect = new Rect(0,0,1,1);  // means no flip
+
+        if(currentDevice > 0){
+            GetComponent<RawImage>().uvRect = new Rect(1,0,-1,1);  // means no flip
+        GetComponent<RectTransform>().localEulerAngles = new Vector3(0f,0f,-90);
+        }
             
         // GetComponent<RectTransform>().sizeDelta = new Vector2(webCameraTexture.width,webCameraTexture.height);
         GetComponent<RawImage>().texture = webCameraTexture;
