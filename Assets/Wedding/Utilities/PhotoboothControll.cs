@@ -28,6 +28,8 @@ public class PhotoboothControll : MonoBehaviour
     private void Start() {
         // print("start");
         // CheckFiles();
+        Screen.fullScreen = false;
+            
     }
     static void enableGC()
     {
