@@ -125,6 +125,7 @@ public class PhotoboothControll : MonoBehaviour
             wedCode = data;
             CheckFiles();
         }
+        Restart();
     }
     void CheckFiles(){
         string path = Path.Combine(Application.persistentDataPath, "wedding_assets/"+wedCode+"/photobooth");

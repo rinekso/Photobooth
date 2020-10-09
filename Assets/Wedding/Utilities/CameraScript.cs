@@ -117,8 +117,6 @@ public class CameraScript : MonoBehaviour
     public void TakePhoto(){
         try
         {
-            PC.selectedVideoPlayer.Stop();
-            PC.selectedVideoPlayer.Play();
             StartCoroutine(Take());
         }
         catch (System.Exception)
@@ -130,6 +128,8 @@ public class CameraScript : MonoBehaviour
     Texture2D[] tempTexture = new Texture2D[20];    
     IEnumerator Take(){
         yield return new WaitForEndOfFrame();
+        PC.selectedVideoPlayer.Stop();
+        PC.selectedVideoPlayer.Play();
         backButton.SetActive(false);
         coverWhite.SetActive(false);
         countDown.SetActive(true);
